@@ -6,6 +6,7 @@
 int servoPin;
 boolean logging;
 Servo Servo1;
+char authHeader[29] = "Authorization: Bearer DUPA.8";
 
 byte mac[] = {
   0x90, 0xA2, 0xDA, 0x0D, 0x1A, 0x14
@@ -42,34 +43,52 @@ void setup() {
   }
 }
 
-// GET /jacek HTTP/1.1\n\r
-// \n\r
-
 void loop() {
   // listen for incoming clients
   EthernetClient client = server.available();
   if (client) {
     if(logging) {
-      Serial.println("new client");
+      Serial.println("New client");
     }
     // an http request ends with a blank line/
     boolean currentLineIsBlank = true;
+    boolean headerAuthorized = false;
+    int headerPointer = 0;
     while (client.connected()) {
       if (client.available()) {
         char c = client.read();
         if(logging) {
           Serial.write(c);
         }
+
+        // verify the auth header
+        if (c == authHeader[headerPointer] && !headerAuthorized) {
+          headerPointer++;
+          Serial.println(headerPointer);
+          if (headerPointer == 28) {
+            headerAuthorized = true;
+          }
+        } else {
+          headerPointer = 0;
+        }
+
         // if you've gotten to the end of the line (received a newline
         // character) and the line is blank, the http request has ended,
         // so you can send a reply
-        // TODO sprawdz pan HEADER
         if (c == '\n' && currentLineIsBlank) {
-          // send a standard http response header
-          client.println("HTTP/1.1 200 OK");
-          client.println("Connection: close");  // the connection will be closed after completion of the response
+          if (headerAuthorized) {
+            // send a standard http response header
+            client.println("HTTP/1.1 200 OK");
+            client.println("Connection: close");
+            client.println();
+            moveFinger();
+          } else {
+            client.println("HTTP/1.1 403 UNAUTHORIZED");
+            client.println("Connection: close");
+            client.println();
+            client.println("<body><img src=\"http://emots.yetihehe.com/2/dupa.gif\"></body>");
+          }
           client.println();
-          moveFinger();
           break;
         }
         if (c == '\n') {
@@ -92,8 +111,7 @@ void loop() {
 }
 
 void moveFinger() {
-   Servo1.write(0);
+   Servo1.write(0); // down
    delay(250);
-   Servo1.write(90);
-   delay(1000);
+   Servo1.write(90); // up
 }
