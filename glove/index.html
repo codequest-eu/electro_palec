@@ -1,0 +1,56 @@
+<!DOCTYPE>
+<html>
+<head>
+  <style>
+    body {
+      background-color: #E4E4ED;
+    }
+    button {
+      background-color: #FF1453;
+      border: none;
+      color: #E4E4ED;
+      font-family: 'Helvetica Neue';
+      font-size: 117px;
+      font-weight: 200;
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 700px;
+      height: 500px;
+      margin: auto;
+      border-radius: 50%;
+      outline: none;
+      cursor: pointer;
+      z-index: 0;
+    }
+    .shadow {
+      background-color: #222;
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 9%;
+      bottom: 0;
+      width: 700px;
+      height: 500px;
+      margin: auto;
+      border-radius: 50%;
+      z-index: -1;
+    }
+    button:hover {
+      background-color: #CC1042;
+    }
+    button:active {
+      background-color: #CC1042;
+      top: 5%;
+    }
+  </style>
+</head>
+<body>
+  <form action="/electro" method="post">
+    <button>PUSH ME!</button>
+    <div class='shadow'></div>
+  </form>
+</body>
+</html>
