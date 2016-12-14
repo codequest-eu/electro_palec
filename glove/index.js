@@ -2,6 +2,8 @@ const express = require('express')
 var app = express()
 const path = require("path")
 const http = require('http')
+var lastClickDate = new Date('1999-01-01')
+var delay = 5
 
 const fingerPostOptions = {
     host: process.env.ELECTRO_PALEC_ADDRESS,
@@ -17,14 +19,19 @@ app.get('/', function (req, res) {
 })
 
 app.post('/electro', function (req, res) {
-  var fingerPost = http.request(fingerPostOptions, function(res) {
-      res.setEncoding('utf8');
-      res.on('data', function (chunk) {
-          console.log('Response: ' + chunk);
-      });
-  });
-  fingerPost.end();
-  res.redirect('/');
+  var now = new Date();
+  now.setSeconds(now.getSeconds()-delay)
+  if  (now > lastClickDate) {
+    var fingerPost = http.request(fingerPostOptions, function(res) {
+        res.setEncoding('utf8');
+        res.on('data', function (chunk) {
+            console.log('Response: ' + chunk);
+        });
+    });
+    fingerPost.end();
+    res.redirect('/');
+    lastClickDate = new Date();
+  } else { res.redirect('/') }
 })
 
 app.listen(3000, function () {
