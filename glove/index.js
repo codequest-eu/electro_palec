@@ -19,9 +19,9 @@ app.get('/', function (req, res) {
 })
 
 app.post('/electro', function (req, res) {
-  var now = new Date();
-  now.setSeconds(now.getSeconds()-delay)
-  if  (now > lastClickDate) {
+  var verificationDate = new Date();
+  verificationDate.setSeconds(verificationDate.getSeconds()-delay)
+  if  (verificationDate > lastClickDate) {
     var fingerPost = http.request(fingerPostOptions, function(res) {
         res.setEncoding('utf8');
         res.on('data', function (chunk) {
