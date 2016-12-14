@@ -10,3 +10,4 @@ services:
       - "3000:3000"
     volumes:
       - ./glove:/glove
+    env_file: .env
