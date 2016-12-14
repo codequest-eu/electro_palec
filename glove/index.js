@@ -4,7 +4,7 @@ const path = require("path")
 const http = require('http')
 
 const fingerPostOptions = {
-    host: '192.168.1.254',
+    host: '46e47f76.ngrok.io',
     path: '/',
     method: 'POST',
     headers: {
