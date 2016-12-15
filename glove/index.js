@@ -18,6 +18,10 @@ app.get('/', function (req, res) {
   res.sendFile(path.join(__dirname+'/index.html'))
 })
 
+app.post('/slack_hook', function (req, res) {
+  console.log(req);
+})
+
 app.post('/electro', function (req, res) {
   var verificationDate = new Date();
   verificationDate.setSeconds(verificationDate.getSeconds()-delay)
