@@ -29,7 +29,7 @@ app.post('/slack_hook', function (req, res) {
       if (bodyStr.indexOf('lukasz') > -1 || bodyStr.indexOf('przemek') > -1) {
         res.json(200, {text: '🖕🖕🖕🖕🖕🖕🖕', username: 'Elektropalec'});
       } else {
-        res.json(200, {text: 'Brawo! Otworzyles drzwi!', username: 'Elektropalec'});
+        res.json(200, {text: 'Brawo! Drzwi otworzone!', username: 'Elektropalec'});
       }
       res.end();
     }
