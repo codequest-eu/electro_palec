@@ -19,10 +19,29 @@ app.get('/', function (req, res) {
 })
 
 app.post('/slack_hook', function (req, res) {
-  console.log(req);
+  var bodyStr = '';
+  req.on("data",function(chunk){
+    bodyStr += chunk.toString();
+  });
+  req.on("end",function(){
+    if (bodyStr.indexOf(process.env.SLACK_TOKEN) > -1) {
+      moveFigner();
+      res.json(200, {text: 'Brawo! Otworzyles drzwi!', username: 'Elektropalec'});
+      res.end();
+    }
+  });
 })
 
 app.post('/electro', function (req, res) {
+  moveFigner();
+  res.redirect('/');
+})
+
+app.listen(3000, function () {
+  console.log('Electro palec listening on port 3000!')
+})
+
+moveFigner = function() {
   var verificationDate = new Date();
   verificationDate.setSeconds(verificationDate.getSeconds()-delay)
   if  (verificationDate > lastClickDate) {
@@ -33,12 +52,7 @@ app.post('/electro', function (req, res) {
         });
     });
     fingerPost.end();
-    res.redirect('/');
     lastClickDate = new Date();
-  } else { res.redirect('/') }
-})
-
-app.listen(3000, function () {
-  console.log('Electro palec listening on port 3000!')
-})
+  }
+}
 
