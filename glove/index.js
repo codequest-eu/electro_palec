@@ -25,8 +25,12 @@ app.post('/slack_hook', function (req, res) {
   });
   req.on("end",function(){
     if (bodyStr.indexOf(process.env.SLACK_TOKEN) > -1) {
-      moveFigner();
-      res.json(200, {text: 'Brawo! Otworzyles drzwi!', username: 'Elektropalec'});
+      if (bodyStr.indexOf('lukasz' || 'przemek')) {
+        res.json(200, {text: '🖕', username: 'Elektropalec'});
+      } else {
+        moveFigner();
+        res.json(200, {text: 'Brawo! Otworzyles drzwi!', username: 'Elektropalec'});
+      }
       res.end();
     }
   });
