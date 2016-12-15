@@ -1,9 +1,10 @@
 #include <Servo.h>
 #include <SPI.h> // Required by Ethernet
 #include <Ethernet.h>
+#include <LiquidCrystal.h>
 
 
-int servoPin;
+int servoPin = 12;
 boolean logging;
 Servo Servo1;
 char authHeader[29] = "Authorization: Bearer DUPA.8";
@@ -16,8 +17,9 @@ IPAddress ip(192, 168, 1, 254);
 
 EthernetServer server(80);
 
+int ledPins[] = {9, 8, 7, 6, 5, 4, 3};
+
 void setup() {
-  servoPin = 8;
   Servo1.attach(servoPin);
   // set servo to init position
   Servo1.write(90);
@@ -41,6 +43,11 @@ void setup() {
     Serial.print("server is at ");
     Serial.println(Ethernet.localIP());
   }
+
+  for (int i=0; i < sizeof(ledPins); i++){
+    pinMode(ledPins[i], OUTPUT);
+    digitalWrite(ledPins[i], LOW);
+  }
 }
 
 void loop() {
@@ -54,6 +61,12 @@ void loop() {
     boolean currentLineIsBlank = true;
     boolean headerAuthorized = false;
     int headerPointer = 0;
+    for (int i=0; i < sizeof(ledPins); i++){
+      digitalWrite(ledPins[i], HIGH);
+      if(i < sizeof(ledPins) - 1) {
+        delay(50);
+      }
+    }
     while (client.connected()) {
       if (client.available()) {
         char c = client.read();
@@ -79,15 +92,11 @@ void loop() {
           if (headerAuthorized) {
             // send a standard http response header
             client.println("HTTP/1.1 200 OK");
-            client.println("Connection: close");
-            client.println();
             moveFinger();
           } else {
             client.println("HTTP/1.1 403 UNAUTHORIZED");
-            client.println("Connection: close");
-            client.println();
-            client.println("<body><img src=\"http://emots.yetihehe.com/2/dupa.gif\"></body>");
           }
+          client.println("Connection: close");
           client.println();
           break;
         }
@@ -104,6 +113,12 @@ void loop() {
     client.flush();
     // close the connection:
     client.stop();
+    for (int i=0; i < sizeof(ledPins); i++){
+      digitalWrite(ledPins[i], LOW);
+      if(i < sizeof(ledPins) - 1) {
+        delay(50);
+      }
+    }
     if(logging) {
       Serial.println("client disconnected");
     }
