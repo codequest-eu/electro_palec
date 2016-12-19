@@ -18,6 +18,8 @@ IPAddress ip(192, 168, 1, 254);
 EthernetServer server(80);
 
 int ledPins[] = {9, 8, 7, 6, 5, 4, 3};
+int buttonPin = 2;
+int buttonState = 0;
 
 void setup() {
   Servo1.attach(servoPin);
@@ -48,10 +50,21 @@ void setup() {
     pinMode(ledPins[i], OUTPUT);
     digitalWrite(ledPins[i], LOW);
   }
+
+  pinMode(buttonPin, INPUT);
 }
 
 void loop() {
   // listen for incoming clients
+   buttonState = digitalRead(buttonPin);
+
+  // check if the pushbutton is pressed.
+  // if it is, the buttonState is HIGH:
+  if (buttonState == HIGH) {
+    setLeds(HIGH);
+    moveFinger();
+    setLeds(LOW);
+  }
   EthernetClient client = server.available();
   if (client) {
     if(logging) {
@@ -61,12 +74,7 @@ void loop() {
     boolean currentLineIsBlank = true;
     boolean headerAuthorized = false;
     int headerPointer = 0;
-    for (int i=0; i < sizeof(ledPins); i++){
-      digitalWrite(ledPins[i], HIGH);
-      if(i < sizeof(ledPins) - 1) {
-        delay(50);
-      }
-    }
+    setLeds(HIGH);
     while (client.connected()) {
       if (client.available()) {
         char c = client.read();
@@ -113,12 +121,7 @@ void loop() {
     client.flush();
     // close the connection:
     client.stop();
-    for (int i=0; i < sizeof(ledPins); i++){
-      digitalWrite(ledPins[i], LOW);
-      if(i < sizeof(ledPins) - 1) {
-        delay(50);
-      }
-    }
+    setLeds(LOW);
     if(logging) {
       Serial.println("client disconnected");
     }
@@ -129,4 +132,13 @@ void moveFinger() {
    Servo1.write(0); // down
    delay(250);
    Servo1.write(90); // up
+}
+
+void setLeds(int state) {
+  for (int i=0; i < sizeof(ledPins); i++){
+    digitalWrite(ledPins[i], state);
+    if(i < sizeof(ledPins) - 1) {
+      delay(50);
+    }
+  }
 }
